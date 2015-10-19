@@ -17,8 +17,8 @@
 #include <ADC.h>
 
 // ARDUINOPATH/hardware/teensy/avr/cores/teensy3/pins_arduino.h 
-const int readPin1 = A2; // ADC0
-const int readPin2 = A3; // ADC1
+const int readPin1 = A2; // ADC0 = Left channel
+const int readPin2 = A3; // ADC1 = Right channel
 
 //https://www.pjrc.com/teensy/td_pulse.html
 #define OUTLP 23
@@ -26,6 +26,7 @@ const int readPin2 = A3; // ADC1
 #define OUTRP 21
 #define OUTRN 20
 
+#define FREQ 70312.5 
 
 ADC *adc = new ADC(); // adc object
 
@@ -41,14 +42,14 @@ void setup() {
 
     pinMode(LED_BUILTIN, OUTPUT);
     
-    analogWriteFrequency(OUTLP, 35156.25);//pin 6 pwm 10 bit
-    analogWriteResolution(10);
-    analogWriteFrequency(OUTLN, 35156.25);//pin 6 pwm 10 bit
-    analogWriteResolution(10);
-    analogWriteFrequency(OUTRP, 35156.25);//pin 6 pwm 10 bit
-    analogWriteResolution(10);
-    analogWriteFrequency(OUTRN, 35156.25);//pin 6 pwm 10 bit
-    analogWriteResolution(10);
+    analogWriteFrequency(OUTLP, FREQ);//pin 6 pwm 10 bit
+    analogWriteResolution(9);
+    analogWriteFrequency(OUTLN, FREQ);//pin 6 pwm 10 bit
+    analogWriteResolution(9);
+    analogWriteFrequency(OUTRP, FREQ);//pin 6 pwm 10 bit
+    analogWriteResolution(9);
+    analogWriteFrequency(OUTRN, FREQ);//pin 6 pwm 10 bit
+    analogWriteResolution(9);
 
     Serial.begin(9600);
 
@@ -58,7 +59,7 @@ void setup() {
     adc->setReference(ADC_REF_3V3, ADC_1);
     
     adc->setAveraging(1); // set number of averages
-    adc->setResolution(12); // set bits of resolution
+    adc->setResolution(9); // set bits of resolution
 
     // it can be ADC_VERY_LOW_SPEED, ADC_LOW_SPEED, ADC_MED_SPEED, ADC_HIGH_SPEED_16BITS, ADC_HIGH_SPEED or ADC_VERY_HIGH_SPEED
     // see the documentation for more information
@@ -122,6 +123,9 @@ void loop() {
             Serial.println("Restarting conversions ");
             //adc->startContinuous(readPin2, ADC_1);
             adc->startSynchronizedContinuous(readPin1, readPin2);
+        }else if (c=='d'){
+            Serial.print(adc->getMaxValue(ADC_0),DEC);
+            Serial.println(result.result_adc0,DEC);
         } else if(c=='v') { // value
             //Serial.print("Value ADC0: ");
             //value = (uint16_t)adc->analogReadContinuous(ADC_0); // the unsigned is necessary for 16 bits, otherwise values larger than 3.3/2 V are negative!
@@ -144,22 +148,7 @@ void loop() {
         }
     }
 
-    /* fail_flag contains all possible errors,
-        They are defined in  ADC_Module.h as
 
-        ADC_ERROR_OTHER
-        ADC_ERROR_CALIB
-        ADC_ERROR_WRONG_PIN
-        ADC_ERROR_ANALOG_READ
-        ADC_ERROR_COMPARISON
-        ADC_ERROR_ANALOG_DIFF_READ
-        ADC_ERROR_CONT
-        ADC_ERROR_CONT_DIFF
-        ADC_ERROR_WRONG_ADC
-        ADC_ERROR_SYNCH
-
-        You can compare the value of the flag with those masks to know what's the error.
-    */
 
     #if defined(ADC_TEENSY_3_1)
     if(adc->adc1->fail_flag) {
@@ -171,28 +160,31 @@ void loop() {
     
 
     delay(100);
-
+    
 }
 
 #if defined(ADC_TEENSY_3_1)
 void adc1_isr(void) {
     result =  adc->readSynchronizedContinuous();
-    int left = result.result_adc0;
-    int right= result.result_adc0;
+    unsigned int left = result.result_adc0;
+    unsigned int right= result.result_adc1;
 
-    if (left<0x200){
+    left /=2;
+    right/=2;
+
+    if (left<0x100){
       analogWrite(OUTLP, 0);
-      analogWrite(OUTLN, 0x200 - left);
+      analogWrite(OUTLN, 0x100 - left);
     } else{
       analogWrite(OUTLN, 0);
-      analogWrite(OUTLP, left-0x200);
+      analogWrite(OUTLP, left-0x100);
     }
-    if (right<0x200){
+    if (right<0x100){
       analogWrite(OUTRP, 0);
-      analogWrite(OUTRN, 0x200 - right);
+      analogWrite(OUTRN, 0x100 - right);
     } else{
       analogWrite(OUTRN, 0);
-      analogWrite(OUTRP, right-0x200);
+      analogWrite(OUTRP, right-0x100);
     }
 
     //test sample rate
