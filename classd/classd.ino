@@ -46,11 +46,11 @@
 #include <SD.h>
 
 // GUItool: begin automatically generated code
-AudioInputAnalog         adc2;           //xy=66,325
+//AudioInputAnalog         adc2;           //xy=66,325
 AudioInputAnalog         adc1;           //xy=70,277
-AudioOutputPWM           pwm2;           //xy=265,326
+//AudioOutputPWM           pwm2;           //xy=265,326
 AudioOutputPWM           pwm1;           //xy=273,274
-AudioConnection          patchCord1(adc2, pwm2);
+//AudioConnection          patchCord1(adc2, pwm2);
 AudioConnection          patchCord2(adc1, pwm1);
 // GUItool: end automatically generated code
 
