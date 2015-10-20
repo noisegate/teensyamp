@@ -4,3 +4,9 @@
 
 ##So..
 the idea is to convert an analog (audio) signal to a digital value and use that to set a PWM which drives an H-bridge. This is a ADC-DAC conversion. 
+
+##Version DMA
+
+This version uses the [audiolib](http://www.pjrc.com/teensy/td_libs_Audio.html) by pjrc.
+
+Initial code was generated using the [audio system disign tool](http://www.pjrc.com/teensy/gui/). 
