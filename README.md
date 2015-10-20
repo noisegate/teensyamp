@@ -14,3 +14,7 @@ Initial code was generated using the [audio system disign tool](http://www.pjrc.
 like this:
 
 <img src="./artwork/audiodesigntool.png" width=500px>
+
+##problem
+We can instantiate ADC objects where we can choose the ADC pin, but we can't do the same with
+PWM (yet). So I have to hack the code a bit. This is a TODO...
