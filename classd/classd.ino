@@ -1,5 +1,5 @@
 #include <SerialFlash.h>
-#include <output_pwm.h>
+#include <output_pwmn.h>
 #include <synth_waveform.h>
 #include <output_i2s.h>
 #include <output_spdif.h>
@@ -46,12 +46,12 @@
 #include <SD.h>
 
 // GUItool: begin automatically generated code
-//AudioInputAnalog         adc2;           //xy=66,325
-AudioInputAnalog         adc1;           //xy=70,277
-//AudioOutputPWM           pwm2;           //xy=265,326
-AudioOutputPWM           pwm1;           //xy=273,274
-//AudioConnection          patchCord1(adc2, pwm2);
-AudioConnection          patchCord2(adc1, pwm1);
+AudioInputAnalog         adcL(2);           //xy=66,325
+AudioInputAnalog         adcR(1);           //xy=70,277
+AudioOutputPWMn           pwmL(2);           //xy=265,326
+AudioOutputPWMn           pwmR(1);           //xy=273,274
+AudioConnection          patchCord1(adcL, pwmL);
+AudioConnection          patchCord2(adcR, pwmR);
 // GUItool: end automatically generated code
 
 void setup()
